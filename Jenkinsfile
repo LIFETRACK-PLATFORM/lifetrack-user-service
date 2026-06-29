@@ -36,28 +36,16 @@ pipeline {
         sh "docker build -t user-service:${env.BUILD_NUMBER} ."
       }
     }
-
-    stage("Deploy") {
-      steps {
-        sh "docker network create lifetrack-net || true"
-        sh "docker stop user-service || true"
-        sh "docker rm user-service || true"
-        sh """
-          docker run -d --name user-service \
-            --network lifetrack-net \
-            --restart unless-stopped \
-            user-service:${env.BUILD_NUMBER}
-        """
-      }
-    }
   }
 
   post {
     success {
       echo "Pipeline OK - user-service #${env.BUILD_NUMBER}"
+      githubNotify credentialsId: 'github-token-userpass', status: 'SUCCESS', context: 'jenkins-ci', description: 'CI passed'
     }
     failure {
       echo "Pipeline FAILED - user-service #${env.BUILD_NUMBER}"
+      githubNotify credentialsId: 'github-token-userpass', status: 'FAILURE', context: 'jenkins-ci', description: 'CI failed'
     }
   }
 }
