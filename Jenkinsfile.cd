@@ -1,0 +1,34 @@
+pipeline {
+  agent any
+
+  stages {
+    stage("Docker Build") {
+      steps {
+        sh "docker build -t user-service:${env.BUILD_NUMBER} ."
+      }
+    }
+
+    stage("Deploy") {
+      steps {
+        sh "docker network create lifetrack-net || true"
+        sh "docker stop user-service || true"
+        sh "docker rm user-service || true"
+        sh """
+          docker run -d --name user-service \
+            --network lifetrack-net \
+            --restart unless-stopped \
+            user-service:${env.BUILD_NUMBER}
+        """
+      }
+    }
+  }
+
+  post {
+    success {
+      echo "Deploy OK - user-service #${env.BUILD_NUMBER}"
+    }
+    failure {
+      echo "Deploy FAILED - user-service #${env.BUILD_NUMBER}"
+    }
+  }
+}
