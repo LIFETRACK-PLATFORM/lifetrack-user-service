@@ -11,3 +11,9 @@ export class UserProfileNotFoundError extends DomainError {
     super(`No se encontró el perfil para el usuario ${authUserId}`);
   }
 }
+
+export class InvalidUserProfileDataError extends DomainError {
+  constructor(message: string) {
+    super(message);
+  }
+}
