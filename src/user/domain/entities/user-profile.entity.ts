@@ -1,4 +1,5 @@
 import { AggregateRoot } from '../../../shared/domain/building-blocks/AggregateRoot';
+import { InvalidUserProfileDataError } from '../exceptions/user-profile.errors';
 
 export enum UserProfileStatus {
   ACTIVE = 'ACTIVE',
@@ -22,9 +23,14 @@ export type UserProfileProps = {
 
 export class UserProfile extends AggregateRoot<UserProfileProps> {
   constructor(props: UserProfileProps, id?: string) {
-    if (!props.authUserId) throw new Error('Auth user ID is required');
-    if (!props.email) throw new Error('Email is required');
-    if (!props.displayName) throw new Error('Display name is required');
+    if (!props.authUserId)
+      throw new InvalidUserProfileDataError('El ID de usuario es obligatorio');
+    if (!props.email)
+      throw new InvalidUserProfileDataError('El email es obligatorio');
+    if (!props.displayName)
+      throw new InvalidUserProfileDataError(
+        'El nombre para mostrar es obligatorio',
+      );
     super(props, id);
   }
 
