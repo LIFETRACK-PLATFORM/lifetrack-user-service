@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserProfile } from '../../../domain/entities/user-profile.entity';
-import { EmailAlreadyExistsError } from '../../../domain/exceptions/user-profile.errors';
+import {
+  EmailAlreadyExistsError,
+  UserProfileNotFoundError,
+} from '../../../domain/exceptions/user-profile.errors';
 import type { UserProfileRepositoryPort } from '../../../domain/ports/user-profile.repository.port';
 import {
   UserProfileModel,
@@ -39,6 +42,19 @@ export class MongooseUserProfileRepository implements UserProfileRepositoryPort 
         throw new EmailAlreadyExistsError(profile.email);
       }
       throw error;
+    }
+  }
+
+  async update(profile: UserProfile): Promise<void> {
+    const result = await this.userProfileModel
+      .updateOne(
+        { authUserId: profile.authUserId },
+        { $set: UserProfileMapper.toPersistence(profile) },
+      )
+      .exec();
+
+    if (result.matchedCount === 0) {
+      throw new UserProfileNotFoundError(profile.authUserId);
     }
   }
 }

@@ -74,4 +74,35 @@ export class UserProfile extends AggregateRoot<UserProfileProps> {
   isActive(): boolean {
     return this.props.status === UserProfileStatus.ACTIVE;
   }
+
+  update(data: {
+    displayName: string;
+    firstName?: string | null;
+    lastName?: string | null;
+    avatarUrl?: string | null;
+    phone?: string | null;
+    timezone: string;
+    language: string;
+  }): void {
+    if (!data.displayName?.trim()) {
+      throw new InvalidUserProfileDataError(
+        'El nombre para mostrar es obligatorio',
+      );
+    }
+    if (!data.timezone?.trim()) {
+      throw new InvalidUserProfileDataError('La zona horaria es obligatoria');
+    }
+    if (!data.language?.trim()) {
+      throw new InvalidUserProfileDataError('El idioma es obligatorio');
+    }
+
+    this.props.displayName = data.displayName.trim();
+    this.props.firstName = data.firstName ?? null;
+    this.props.lastName = data.lastName ?? null;
+    this.props.avatarUrl = data.avatarUrl ?? null;
+    this.props.phone = data.phone ?? null;
+    this.props.timezone = data.timezone.trim();
+    this.props.language = data.language.trim();
+    this.props.updatedAt = new Date();
+  }
 }

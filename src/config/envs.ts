@@ -2,12 +2,14 @@ import 'dotenv/config';
 import * as joi from 'joi';
 
 interface EnvVars {
+  PORT: number;
   NATS_SERVERS: string[];
   MONGO_URL: string;
 }
 
 const envsSchema = joi
   .object({
+    PORT: joi.number().required(),
     NATS_SERVERS: joi.array().items(joi.string()).required(),
     MONGO_URL: joi.string().required(),
   })
@@ -25,6 +27,7 @@ if (error) {
 const envVars: EnvVars = value;
 
 export const envs = {
+  port: envVars.PORT,
   natsServers: envVars.NATS_SERVERS,
   mongoUrl: envVars.MONGO_URL,
 };
