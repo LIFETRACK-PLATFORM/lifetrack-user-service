@@ -18,7 +18,8 @@ const ERROR_CODE_MAP = new Map<DomainErrorConstructor, GrpcStatus>([
 
 @Catch(DomainError)
 export class DomainExceptionFilter implements ExceptionFilter {
-  catch(exception: DomainError, _: ArgumentsHost): Observable<never> {
+  catch(exception: DomainError, host: ArgumentsHost): Observable<never> {
+    void host;
     const code =
       ERROR_CODE_MAP.get(exception.constructor as DomainErrorConstructor) ??
       GrpcStatus.INVALID_ARGUMENT;

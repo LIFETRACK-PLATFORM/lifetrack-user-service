@@ -34,7 +34,7 @@ describe('GetUserProfileUseCase', () => {
     const result = await useCase.execute('user-1');
 
     expect(result).toBe(profile);
-    expect(repository.findByAuthUserId).toHaveBeenCalledWith('user-1');
+    expect(repository.findByAuthUserId.mock.calls).toEqual([['user-1']]);
   });
 
   it('lanza UserProfileNotFoundError cuando no existe', async () => {

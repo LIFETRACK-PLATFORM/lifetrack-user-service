@@ -43,7 +43,7 @@ describe('UpdateUserProfileUseCase', () => {
 
     expect(result.displayName).toBe('Alice Updated');
     expect(result.firstName).toBe('Alice');
-    expect(repository.update).toHaveBeenCalledWith(profile);
+    expect(repository.update.mock.calls).toEqual([[profile]]);
   });
 
   it('lanza UserProfileNotFoundError cuando no existe', async () => {
