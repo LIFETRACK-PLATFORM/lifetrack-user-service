@@ -19,21 +19,21 @@ describe('UserProfile', () => {
   });
 
   it('lanza error si falta el authUserId', () => {
-    expect(
-      () => new UserProfile({ ...baseProps, authUserId: '' }),
-    ).toThrow('El ID de usuario es obligatorio');
+    expect(() => new UserProfile({ ...baseProps, authUserId: '' })).toThrow(
+      'El ID de usuario es obligatorio',
+    );
   });
 
   it('lanza error si falta el email', () => {
-    expect(
-      () => new UserProfile({ ...baseProps, email: '' }),
-    ).toThrow('El email es obligatorio');
+    expect(() => new UserProfile({ ...baseProps, email: '' })).toThrow(
+      'El email es obligatorio',
+    );
   });
 
   it('lanza error si falta el displayName', () => {
-    expect(
-      () => new UserProfile({ ...baseProps, displayName: '' }),
-    ).toThrow('El nombre para mostrar es obligatorio');
+    expect(() => new UserProfile({ ...baseProps, displayName: '' })).toThrow(
+      'El nombre para mostrar es obligatorio',
+    );
   });
 
   it('isActive() retorna true cuando el status es ACTIVE', () => {
