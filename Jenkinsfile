@@ -54,14 +54,15 @@ pipeline {
 
     stage("Docker Build") {
       steps {
-        sh "docker build -t user-service:latest ."
+        sh "docker buildx build --builder lifetrack-builder -t user-service:latest --load ."
       }
     }
   }
 
   post {
     always {
-      sh 'docker image prune -f'
+      sh 'docker image prune -af'
+      sh 'docker buildx prune -af --builder lifetrack-builder'
     }
     success {
       echo "Pipeline OK - user-service #${env.BUILD_NUMBER}"
