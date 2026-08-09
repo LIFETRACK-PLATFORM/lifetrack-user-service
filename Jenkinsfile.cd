@@ -10,7 +10,7 @@ pipeline {
   stages {
     stage("Docker Build") {
       steps {
-        sh "docker build -t ${IMAGE}:${env.BUILD_NUMBER} ."
+        sh "docker build -t ${IMAGE}:latest ."
       }
     }
 
@@ -18,7 +18,7 @@ pipeline {
       steps {
         withCredentials([usernamePassword(credentialsId: 'github-token-userpass', usernameVariable: 'GH_USER', passwordVariable: 'GH_TOKEN')]) {
           sh "echo ${GH_TOKEN} | docker login ghcr.io -u ${GH_USER} --password-stdin"
-          sh "docker push ${IMAGE}:${env.BUILD_NUMBER}"
+          sh "docker push ${IMAGE}:latest"
         }
       }
     }
@@ -44,12 +44,13 @@ pipeline {
             ssh -o StrictHostKeyChecking=no ${VPS_USER}@${VPS} '
               docker stop user-service || true
               docker rm user-service || true
-              docker pull ${IMAGE}:${env.BUILD_NUMBER}
+              docker pull ${IMAGE}:latest
               docker run -d --name user-service \
                 --network lifetrack-net \
                 --restart unless-stopped \
                 --env-file /home/ricardo/lifetrack-infra/envs/user-service.env \
-                ${IMAGE}:${env.BUILD_NUMBER}
+                ${IMAGE}:latest
+              docker image prune -f
             '
           """
         }
@@ -58,6 +59,9 @@ pipeline {
   }
 
   post {
+    always {
+      sh 'docker image prune -f'
+    }
     success {
       echo "Deploy OK - user-service #${env.BUILD_NUMBER}"
     }
